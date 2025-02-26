@@ -1,0 +1,39 @@
+name: Build and Push to ECR
+
+on:
+  push:
+    branches:
+      - main 
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: 'read'
+      id-token: 'write' 
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::203918847795:role/git_IAM
+          aws-region: ap-northeast-2
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build Docker image
+        run: |
+          docker build -t my-app:latest .
+
+      - name: Tag Docker image
+        run: |
+          docker tag my-app:latest 203918847795.dkr.ecr.ap-northeast-2.amazonaws.com/bitenews:latest 
+      - name: Push Docker image to ECR
+        run: |
+          docker push 203918847795.dkr.ecr.ap-northeast-2.amazonaws.com/bitenews:latest  # AWS 계정 ID, 리전, ECR 이름 변경 필요
+
