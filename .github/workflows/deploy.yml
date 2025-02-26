@@ -1,9 +1,9 @@
-name: Build and Push to ECR
+name: Build and Push Ubuntu Image to ECR
 
 on:
   push:
     branches:
-      - main 
+      - main  # main 브랜치에 푸시할 때 실행
 
 jobs:
   build-and-push:
@@ -11,7 +11,7 @@ jobs:
 
     permissions:
       contents: 'read'
-      id-token: 'write' 
+      id-token: 'write'
 
     steps:
       - name: Checkout code
@@ -26,14 +26,19 @@ jobs:
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
 
+      - name: Create Dockerfile for Ubuntu Image
+        run: |
+          echo "FROM ubuntu:latest" > Dockerfile
+
       - name: Build Docker image
         run: |
-          docker build -t my-app:latest .
+          docker build -t ubuntu-image:latest .
 
       - name: Tag Docker image
         run: |
-          docker tag my-app:latest 203918847795.dkr.ecr.ap-northeast-2.amazonaws.com/bitenews:latest 
+          docker tag ubuntu-image:latest 203918847795.dkr.ecr.ap-northeast-2.amazonaws.com/bitenews:latest
+
       - name: Push Docker image to ECR
         run: |
-          docker push 203918847795.dkr.ecr.ap-northeast-2.amazonaws.com/bitenews:latest  # AWS 계정 ID, 리전, ECR 이름 변경 필요
+          docker push 203918847795.dkr.ecr.ap-northeast-2.amazonaws.com/bitenews:latest
 
