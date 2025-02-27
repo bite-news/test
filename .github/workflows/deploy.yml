@@ -41,8 +41,8 @@ jobs:
           RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
           RDS_PORT: ${{ secrets.RDS_PORT }}
           RDS_USER: ${{ secrets.RDS_USER }}
-          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}       # 예: bitenews
-          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}           # 예: 203918847795.dkr.ecr.ap-northeast-2.amazonaws.com
+          ECR_REPOSITORY: bitenews
+          ECR_REGISTRY: 203918847795.dkr.ecr.ap-northeast-2.amazonaws.com
           IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build \
