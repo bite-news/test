@@ -33,7 +33,8 @@ def upload_to_s3(file_path: str, s3_key: str, content_type: str) -> str:
                 s3_key,
                 ExtraArgs={"ContentType": content_type}
             )
-        file_url = f"https://{AWS_BUCKET_NAME}.s3.{AWS_REGION_NAME}.amazonaws.com/{s3_key}"
+        file_url = f"https://d1khc6c0zhbaeh.cloudfront.net/{s3_key}"
+        # file_url = f"https://{AWS_BUCKET_NAME}.s3.{AWS_REGION_NAME}.amazonaws.com/{s3_key}"
         logger.info(f"✅ S3 업로드 완료: {file_url}")
         return file_url
     except Exception as e:
