@@ -1,0 +1,44 @@
+name: Deploy to AWS ECR
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  push_to_ecr:
+    name: Build and Push FastAPI Docker Image to AWS ECR
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::203918847795:role/git_IAM
+          aws-region: ap-northeast-2
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build Docker Image
+        run: |
+          set -e
+          docker build -t bitenews .
+
+      - name: Tag Docker Image
+        if: success()
+        run: |
+          docker tag bitenews:latest 203918847795.dkr.ecr.ap-northeast-2.amazonaws.com/bitenews:latest
+
+      - name: Push Docker Image to ECR
+        if: success()
+        run: |
+          docker push 203918847795.dkr.ecr.ap-northeast-2.amazonaws.com/bitenews:latest
+

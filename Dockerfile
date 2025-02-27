@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
     libglib2.0-0
 
 # 필요 라이브러리 설치를 위한 requirements.txt 복사
-COPY ./bitenews/requirements.txt /app/requirements.txt
+COPY ./requirements.txt /app/requirements.txt
 
 # 의존성 패키지 설치
 RUN pip install --no-cache-dir --upgrade pip && \
@@ -20,4 +20,4 @@ RUN pip install --no-cache-dir --upgrade pip && \
 COPY . /app
 
 # FastAPI 서버 실행 (Uvicorn 사용)
-CMD ["uvicorn", "bitenews.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
