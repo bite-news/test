@@ -27,13 +27,29 @@ jobs:
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
 
+      - name: Ensure Docker CLI is using default builder
+        run: |
+          docker buildx use default || docker buildx create --use
+
+      - name: Verify GitHub Secrets
+        run: |
+          if [[ -z "${{ secrets.AWS_ACCESS_KEY_ID }}" ]]; then
+            echo "Error: AWS_ACCESS_KEY_ID is not set in GitHub Secrets" && exit 1
+          fi
+          if [[ -z "${{ secrets.AWS_SECRET_ACCESS_KEY }}" ]]; then
+            echo "Error: AWS_SECRET_ACCESS_KEY is not set in GitHub Secrets" && exit 1
+          fi
+          if [[ -z "${{ secrets.OPENAI_API_KEY }}" ]]; then
+            echo "Error: OPENAI_API_KEY is not set in GitHub Secrets" && exit 1
+          fi
+
       - name: Build Docker Image with Secrets
         run: |
           docker build \
             --build-arg AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
             --build-arg AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
             --build-arg OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
-            -t bitenews . 
+            -t bitenews .
 
       - name: Tag Docker Image
         run: |
