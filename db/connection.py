@@ -2,12 +2,12 @@ from config import logger, config
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-# 📌 RDS config
-RDS_DB = config['rds']['database']
-RDS_HOST = config['rds']['host']
-RDS_PORT = config['rds']['port']
-RDS_USER = config['rds']['user']
-RDS_PASSWORD = config['rds']['password']
+# 📌 RDS config (flat key 구조 사용)
+RDS_DB = config['RDS_DATABASE']
+RDS_HOST = config['RDS_HOST']
+RDS_PORT = config['RDS_PORT']
+RDS_USER = config['RDS_USER']
+RDS_PASSWORD = config['RDS_PASSWORD']
 
 # 🔥 RDS 연결 설정
 SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{RDS_USER}:{RDS_PASSWORD}@{RDS_HOST}:{RDS_PORT}/{RDS_DB}"
@@ -22,6 +22,6 @@ SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 def get_session():
     db = SessionLocal()
     try:
-        yield db # DB가 연결된 경우, DB 세션 시작
+        yield db
     finally:
-        db.close() # DB 세션이 시작되고, API 호출이 마무리되면 DB 세션을 닫아준다.
+        db.close()
