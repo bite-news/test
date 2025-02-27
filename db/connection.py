@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 
 # 📌 RDS config (flat key 구조 사용)
 RDS_DB = config['RDS_DATABASE']
-RDS_HOST = config['RDS_HOST']
+RDS_HOST = config['RDS_HOST'].strip()
 RDS_PORT = config['RDS_PORT']
 RDS_USER = config['RDS_USER']
 RDS_PASSWORD = config['RDS_PASSWORD']
