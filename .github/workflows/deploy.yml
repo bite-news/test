@@ -29,10 +29,11 @@ jobs:
 
       - name: Build Docker Image with Secrets
         run: |
-          docker build --build-arg AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
-                       --build-arg AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
-                       --build-arg OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
-                       -t bitenews .
+          docker build \
+            --build-arg AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
+            --build-arg AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+            --build-arg OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
+            -t bitenews .
 
       - name: Tag Docker Image
         if: success()
@@ -43,3 +44,4 @@ jobs:
         if: success()
         run: |
           docker push 203918847795.dkr.ecr.ap-northeast-2.amazonaws.com/bitenews:latest
+
