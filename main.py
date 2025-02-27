@@ -37,7 +37,7 @@ async def receive_article_and_make_shortform(article_request_dto: ArticleRequest
         logger.info(f"📥 기사 DB 저장 완료: {article_request_dto.title}")
 
         # ✅ 2️⃣ 썸네일 & 비디오 생성
-        # create_article(article_request_dto.title, article_request_dto.content)
+        create_article(article_request_dto.title, article_request_dto.content)
         thumbnail_path = "output/thumbnail.png"
         video_path = "output/final_video.mp4"
         logger.info(f"✅ 비디오 생성 완료: {new_article.id} : {new_article.title}")
@@ -50,7 +50,7 @@ async def receive_article_and_make_shortform(article_request_dto: ArticleRequest
         logger.info(f"✅ S3 업로드 완료: {new_article.id} : {new_article.title}")
 
         # ✅ 4️⃣ Article 정보 업데이트 (S3 URL)
-        update_article(session, new_article.id, thumbnail_url, video_url)
+        update_article(session, new_article.id, video_url, thumbnail_url)
         logger.info(f"✅ 기사 DB 업데이트 완료: {new_article.id} : {new_article.title}")
 
         return {"status": "success", "message": "✅ 기사 숏폼 생성 성공!"}
