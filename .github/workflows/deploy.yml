@@ -35,8 +35,18 @@ jobs:
           ECR_REPOSITORY: bitenews
           IMAGE_TAG: ${{ github.sha }}
         run: |
-	  docker build --build-arg AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} --build-arg AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} --build-arg OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} --build-arg AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }} --build-arg AWS_REGION=${{ secrets.AWS_REGION }} --build-arg RDS_DATABASE=${{ secrets.RDS_DATABASE }} --build-arg RDS_HOST=${{ secrets.RDS_HOST }} --build-arg RDS_PASSWORD=${{ secrets.RDS_PASSWORD }} --build-arg RDS_PORT=${{ secrets.RDS_PORT }} --build-arg RDS_USER=${{ secrets.RDS_USER }} -t $ECR_REPOSITORY:$IMAGE_TAG .
-
+	  docker build \
+            --build-arg AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
+            --build-arg AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+            --build-arg OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
+            --build-arg AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }} \
+            --build-arg AWS_REGION=${{ secrets.AWS_REGION }} \
+            --build-arg RDS_DATABASE=${{ secrets.RDS_DATABASE }} \
+            --build-arg RDS_HOST=${{ secrets.RDS_HOST }} \
+            --build-arg RDS_PASSWORD=${{ secrets.RDS_PASSWORD }} \
+            --build-arg RDS_PORT=${{ secrets.RDS_PORT }} \
+            --build-arg RDS_USER=${{ secrets.RDS_USER }} \
+            -t $ECR_REPOSITORY:$IMAGE_TAG .
           docker tag bitenews:latest 203918847795.dkr.ecr.ap-northeast-2.amazonaws.com/bitenews:latest
           docker push 203918847795.dkr.ecr.ap-northeast-2.amazonaws.com/bitenews:latest
 
