@@ -8,20 +8,31 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::203918847795:role/git_IAM
+          aws-region: ap-northeast-2
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
       - name: Log in to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
+        with:
+          region: ap-northeast-2
 
       - name: Build, tag, and push Docker image to ECR
         env:
-          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
-          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          ECR_REGISTRY: 203918847795.dkr.ecr.ap-northeast-2.amazonaws.com
+          ECR_REPOSITORY: bitenews
           IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build \
@@ -36,6 +47,6 @@ jobs:
             --build-arg RDS_PORT=${{ secrets.RDS_PORT }} \
             --build-arg RDS_USER=${{ secrets.RDS_USER }} \
             -t $ECR_REPOSITORY:$IMAGE_TAG .
-          docker tag $ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker tag bitenews:latest 203918847795.dkr.ecr.ap-northeast-2.amazonaws.com/bitenews:latest
+          docker push 203918847795.dkr.ecr.ap-northeast-2.amazonaws.com/bitenews:latest
 
