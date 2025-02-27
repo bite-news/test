@@ -1,7 +1,10 @@
+aws:
+  region_name: ap-northeast-2
+  bucket_name: bitenews
+
 rds:
   host: database-1.cje48ukwyylt.ap-northeast-2.rds.amazonaws.com
   user: admin
   password: password
   database: bitenews
   port: 3306
-
