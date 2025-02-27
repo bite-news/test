@@ -1,13 +1,13 @@
 import boto3
 from config import logger, config
 
-# 📌 AWS config
-AWS_ACCESS_KEY = config['aws']['access_key']
-AWS_SECRET_KEY = config['aws']['secret_key']
-AWS_REGION_NAME = config['aws']['region_name']
-AWS_BUCKET_NAME = config['aws']['bucket_name']
+# AWS config: 환경변수에서 읽어온 값 사용
+AWS_ACCESS_KEY = config["AWS_ACCESS_KEY_ID"]
+AWS_SECRET_KEY = config["AWS_SECRET_ACCESS_KEY"]
+AWS_REGION_NAME = config["AWS_REGION"]
+AWS_BUCKET_NAME = config["AWS_BUCKET_NAME"]
 
-# 📌 S3 Client 생성
+# S3 Client 생성
 s3_client = boto3.client(
     "s3",
     aws_access_key_id=AWS_ACCESS_KEY,
@@ -38,4 +38,4 @@ def upload_to_s3(file_path: str, s3_key: str, content_type: str) -> str:
         return file_url
     except Exception as e:
         logger.error(f"❌ S3 업로드 실패: {e}")
-        raise Exception(f"S3 업로드 오류: {e}")  
+        raise Exception(f"S3 업로드 오류: {e}")
