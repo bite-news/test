@@ -20,8 +20,9 @@ from config import config, logger
 # ====================================
 # 초기화 및 설정
 # ====================================
-os.environ["OPENAI_API_KEY"] = config['openai']['api_key']
-openai.api_key = config['openai']['api_key']
+os.environ["OPENAI_API_KEY"] = config["OPENAI_API_KEY"]
+openai.api_key = config["OPENAI_API_KEY"]
+
 
 # 출력 디렉토리 설정
 OUTPUT_DIR = config.get('output_directory', 'output')
