@@ -23,7 +23,6 @@ from config import config, logger
 os.environ["OPENAI_API_KEY"] = config["OPENAI_API_KEY"]
 openai.api_key = config["OPENAI_API_KEY"]
 
-
 # 출력 디렉토리 설정
 OUTPUT_DIR = config.get('output_directory', 'output')
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -58,7 +57,7 @@ def cleanup_temp_files() -> None:
 def load_font():
     """폰트를 한 번만 로드하는 함수"""
     # 기본 폰트 경로 설정 - bitenews 디렉토리 내의 폰트 파일
-    default_font_path = 'bitenews/GmarketSansTTFBold.ttf'
+    default_font_path = 'GmarketSansTTFBold.ttf'
     font_path = config.get('font_file', default_font_path)
     font_size = config.get('font_size', 50)
 
@@ -263,7 +262,7 @@ def overlay_title_on_image(image_path, title, output_path):
         while True:
             try:
                 # 기본 폰트 경로 설정
-                default_font_path = 'bitenews/GmarketSansTTFBold.ttf'
+                default_font_path = 'GmarketSansTTFBold.ttf'
 
                 # 폰트 크기 조절을 위한 새 폰트 로드
                 current_font = ImageFont.truetype(
