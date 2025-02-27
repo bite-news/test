@@ -29,24 +29,34 @@ jobs:
         with:
           region: ap-northeast-2
 
-      - name: Build, tag, and push Docker image to ECR
+      - name: Build and Push Docker Image
         env:
-          ECR_REGISTRY: 203918847795.dkr.ecr.ap-northeast-2.amazonaws.com
-          ECR_REPOSITORY: bitenews
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          RDS_DATABASE: ${{ secrets.RDS_DATABASE }}
+          RDS_HOST: ${{ secrets.RDS_HOST }}
+          RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
+          RDS_PORT: ${{ secrets.RDS_PORT }}
+          RDS_USER: ${{ secrets.RDS_USER }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}       # 예: bitenews
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}           # 예: 203918847795.dkr.ecr.ap-northeast-2.amazonaws.com
           IMAGE_TAG: ${{ github.sha }}
         run: |
-	  docker build \
-            --build-arg AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
-            --build-arg AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
-            --build-arg OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
-            --build-arg AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }} \
-            --build-arg AWS_REGION=${{ secrets.AWS_REGION }} \
-            --build-arg RDS_DATABASE=${{ secrets.RDS_DATABASE }} \
-            --build-arg RDS_HOST=${{ secrets.RDS_HOST }} \
-            --build-arg RDS_PASSWORD=${{ secrets.RDS_PASSWORD }} \
-            --build-arg RDS_PORT=${{ secrets.RDS_PORT }} \
-            --build-arg RDS_USER=${{ secrets.RDS_USER }} \
+          docker build \
+            --build-arg AWS_ACCESS_KEY_ID \
+            --build-arg AWS_SECRET_ACCESS_KEY \
+            --build-arg OPENAI_API_KEY \
+            --build-arg AWS_BUCKET_NAME \
+            --build-arg AWS_REGION \
+            --build-arg RDS_DATABASE \
+            --build-arg RDS_HOST \
+            --build-arg RDS_PASSWORD \
+            --build-arg RDS_PORT \
+            --build-arg RDS_USER \
             -t $ECR_REPOSITORY:$IMAGE_TAG .
-          docker tag bitenews:latest 203918847795.dkr.ecr.ap-northeast-2.amazonaws.com/bitenews:latest
-          docker push 203918847795.dkr.ecr.ap-northeast-2.amazonaws.com/bitenews:latest
+          docker tag $ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
