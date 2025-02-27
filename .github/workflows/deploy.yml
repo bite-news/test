@@ -1,4 +1,4 @@
-name: Deploy to AWS ECR
+name: Build and Push Docker Image to ECR
 
 on:
   push:
@@ -6,56 +6,36 @@ on:
       - main
 
 jobs:
-  push_to_ecr:
-    name: Build and Push FastAPI Docker Image to AWS ECR
+  build-and-push:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: 'read'
-      id-token: 'write'
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: arn:aws:iam::203918847795:role/git_IAM
-          aws-region: ap-northeast-2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-      - name: Login to Amazon ECR
+      - name: Log in to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Ensure Docker CLI is using default builder
-        run: |
-          docker buildx use default || docker buildx create --use
-
-      - name: Verify GitHub Secrets
-        run: |
-          if [[ -z "${{ secrets.AWS_ACCESS_KEY_ID }}" ]]; then
-            echo "Error: AWS_ACCESS_KEY_ID is not set in GitHub Secrets" && exit 1
-          fi
-          if [[ -z "${{ secrets.AWS_SECRET_ACCESS_KEY }}" ]]; then
-            echo "Error: AWS_SECRET_ACCESS_KEY is not set in GitHub Secrets" && exit 1
-          fi
-          if [[ -z "${{ secrets.OPENAI_API_KEY }}" ]]; then
-            echo "Error: OPENAI_API_KEY is not set in GitHub Secrets" && exit 1
-          fi
-
-      - name: Build Docker Image with Secrets
+      - name: Build, tag, and push Docker image to ECR
+        env:
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build \
             --build-arg AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
             --build-arg AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
             --build-arg OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
-            -t bitenews .
-
-      - name: Tag Docker Image
-        run: |
-          docker tag bitenews:latest 203918847795.dkr.ecr.ap-northeast-2.amazonaws.com/bitenews:latest
-
-      - name: Push Docker Image to ECR
-        run: |
-          docker push 203918847795.dkr.ecr.ap-northeast-2.amazonaws.com/bitenews:latest
+            --build-arg AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }} \
+            --build-arg AWS_REGION=${{ secrets.AWS_REGION }} \
+            --build-arg RDS_DATABASE=${{ secrets.RDS_DATABASE }} \
+            --build-arg RDS_HOST=${{ secrets.RDS_HOST }} \
+            --build-arg RDS_PASSWORD=${{ secrets.RDS_PASSWORD }} \
+            --build-arg RDS_PORT=${{ secrets.RDS_PORT }} \
+            --build-arg RDS_USER=${{ secrets.RDS_USER }} \
+            -t $ECR_REPOSITORY:$IMAGE_TAG .
+          docker tag $ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
